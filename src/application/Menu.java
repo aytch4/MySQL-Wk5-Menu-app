@@ -21,7 +21,8 @@ public class Menu {
 			"Create Child",
 			"Delete Child",
 			"Create Gift",
-			"Delete Gift");
+			"Delete Gift",
+			"Exit");
 	
 	public void start() {
 		String selection = "";
@@ -43,14 +44,19 @@ public class Menu {
 					createGift();
 				} else if (selection.equals("6")) {
 					deleteGift();
+				} else if (selection.equals("7")) {
+					System.out.println("Goodbye");
+					return;
+				} else {
+				  System.out.println("Please choose from the options listed.");
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
-			System.out.println("Press enter to continue...");
-			scanner.nextLine();
-			
+//			
+//			System.out.println("Press enter to continue...");
+//			scanner.nextLine();
+//			
 		} while (!selection.equals("-1"));		
 	}
 
@@ -68,7 +74,8 @@ public class Menu {
 		}	
 		
 	private void displayChild() throws SQLException {
-			System.out.print("Enter child id: ");	
+		displayChildren();	
+		System.out.print("Enter child id: ");	
 			int id = Integer.parseInt(scanner.nextLine());
 			Child child = childDao.getChildById(id);
 			System.out.println(child.getChildId() + ": " + child.getName());
@@ -84,6 +91,7 @@ public class Menu {
 	}
 
 	private void deleteChild() throws SQLException {
+		displayChildren();
 		System.out.print("Enter child's id to delete: ");	
 		int id = Integer.parseInt(scanner.nextLine());
 		childDao.deleteChildById(id);
@@ -92,15 +100,25 @@ public class Menu {
 	private void createGift() throws SQLException {
 		System.out.print("Enter item: ");	
 		String item = scanner.nextLine();
+		displayChildren();
 		System.out.print("Enter the ID of the child the gift is for: ");	
 		int childId = Integer.parseInt(scanner.nextLine());
 		giftDao.createNewGift(item, childId);
 	}
 	
 	private void deleteGift() throws SQLException {
-			System.out.print("Enter gift id to delete: ");	
-			int id = Integer.parseInt(scanner.nextLine());
-			giftDao.deleteGiftById(id);
+		displayChildren();
+		System.out.println("Enter the ID of the child whose gift you would like to delete:");
+		int id = Integer.parseInt(scanner.nextLine());
+		Child child = childDao.getChildById(id);
+		System.out.println(child.getChildId() + ": " + child.getName());
+		for (Gift gift : child.getGifts()) {
+			System.out.println("\tGiftId: " + gift.getGiftId() + " - Item: " + gift.getItem());;
+		}
+		
+		System.out.print("Enter gift id to delete: ");	
+			int giftId = Integer.parseInt(scanner.nextLine());
+			giftDao.deleteGiftById(giftId);
 		}
 		
 	}
